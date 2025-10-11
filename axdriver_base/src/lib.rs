@@ -28,6 +28,8 @@ pub enum DeviceType {
     Display,
     /// Input device (e.g., keyboard, mouse).
     Input,
+    /// socket device (e.g., vsock).
+    Socket,
 }
 
 /// The error type for device operation failures.
