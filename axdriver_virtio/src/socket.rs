@@ -81,7 +81,7 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
         self.inner.update_credit(peer_addr, src_port);
         log::info!("===========================333");
 
-        DevResult(res)
+        res
     }
 
     fn recv_avail(&mut self, cid: VsockConnId) -> DevResult<usize> {
