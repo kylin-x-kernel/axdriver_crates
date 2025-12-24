@@ -3,6 +3,7 @@ use axdriver_vsock::{VsockConnId, VsockDriverEvent, VsockDriverOps};
 use virtio_drivers::{
     device::socket::{
         VirtIOSocket, VsockAddr, VsockConnectionManager as InnerDev, VsockEvent, VsockEventType,
+        ConnectionInfo,
     },
     transport::Transport,
     Hal,
@@ -114,6 +115,13 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
             }
         }
     }
+
+    fn send_credit_update(&mut self, cid: VsockConnId) -> DevResult<()> {
+        let (peer_addr, src_port) = map_conn_id(cid);
+        self.inner
+            .update_credit(peer_addr, src_port)
+            .map_err(as_dev_err)
+    }
 }
 
 fn convert_vsock_event<H: Hal, T: Transport>(
@@ -139,6 +147,8 @@ fn convert_vsock_event<H: Hal, T: Transport>(
             Ok(VsockDriverEvent::Received(cid, read))
         }
         VsockEventType::Disconnected { reason: _ } => Ok(VsockDriverEvent::Disconnected(cid)),
+        VsockEventType::CreditRequest => Ok(VsockDriverEvent::CreditRequest(cid)),
+        VsockEventType::CreditUpdate => Ok(VsockDriverEvent::CreditUpdate(cid)),
         _ => Ok(VsockDriverEvent::Unknown),
     }
 }

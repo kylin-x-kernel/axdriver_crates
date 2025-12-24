@@ -45,6 +45,10 @@ pub enum VsockDriverEvent {
     Received(VsockConnId, usize),
     /// Disconnected
     Disconnected(VsockConnId),
+    /// CreditRequest
+    CreditRequest(VsockConnId),
+    /// CreditUpdate
+    CreditUpdate(VsockConnId),
     /// unknown event
     Unknown,
 }
@@ -80,4 +84,7 @@ pub trait VsockDriverOps: BaseDriverOps {
 
     /// poll event from driver
     fn poll_event(&mut self, buf: &mut [u8]) -> DevResult<Option<VsockDriverEvent>>;
+
+    /// Send credit update to the connected peer socket.
+    fn send_credit_update(&mut self, cid: VsockConnId) -> DevResult<()>;
 }
