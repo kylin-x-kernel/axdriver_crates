@@ -24,7 +24,8 @@ impl<H: Hal, T: Transport> VirtIoSocketDev<H, T> {
     pub fn try_new(transport: T) -> DevResult<Self> {
         let virtio_socket = VirtIOSocket::<H, _>::new(transport).map_err(as_dev_err)?;
         Ok(Self {
-            inner: InnerDev::new(virtio_socket),
+            // inner: InnerDev::new(virtio_socket),
+            inner: InnerDev::new_with_capacity(virtio_socket, 32 * 1024), // 32KB buffer
         })
     }
 }
