@@ -73,15 +73,11 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
     }
 
     fn recv(&mut self, cid: VsockConnId, buf: &mut [u8]) -> DevResult<usize> {
-        log::info!("===========================111");
         let (peer_addr, src_port) = map_conn_id(cid);
         let res = self.inner
             .recv(peer_addr, src_port, buf)
             .map_err(as_dev_err);
-        log::info!("===========================222");
         self.inner.update_credit(peer_addr, src_port);
-        log::info!("===========================333");
-
         res
     }
 
