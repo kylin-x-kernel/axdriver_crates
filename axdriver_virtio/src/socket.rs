@@ -140,10 +140,8 @@ fn convert_vsock_event<H: Hal, T: Transport>(
         VsockEventType::ConnectionRequest => Ok(VsockDriverEvent::ConnectionRequest(cid)),
         VsockEventType::Connected => Ok(VsockDriverEvent::Connected(cid)),
         VsockEventType::Received { length } => {
-            let read = inner
-                .recv(event.source, event.destination.port, &mut buf[..length])
-                .map_err(as_dev_err)?;
-            Ok(VsockDriverEvent::Received(cid, read))
+            // Do not read data here, let the upper layer decide when to read.
+            Ok(VsockDriverEvent::Received(cid, length))
         }
         VsockEventType::Disconnected { reason: _ } => Ok(VsockDriverEvent::Disconnected(cid)),
         _ => Ok(VsockDriverEvent::Unknown),
