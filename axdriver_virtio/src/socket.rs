@@ -100,7 +100,7 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
             .map_err(as_dev_err)
     }
 
-    fn poll_event(&mut self, buf: &mut [u8]) -> DevResult<Option<VsockDriverEvent>> {
+    fn poll_event(&mut self) -> DevResult<Option<VsockDriverEvent>> {
         match self.inner.poll() {
             Ok(None) => {
                 // no event
@@ -108,7 +108,7 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
             }
             Ok(Some(event)) => {
                 // translate event
-                let result = convert_vsock_event(event, &mut self.inner, buf)?;
+                let result = convert_vsock_event(event, &mut self.inner)?;
                 Ok(Some(result))
             }
             Err(e) => {
@@ -121,8 +121,7 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
 
 fn convert_vsock_event<H: Hal, T: Transport>(
     event: VsockEvent,
-    inner: &mut InnerDev<H, T>,
-    buf: &mut [u8],
+    inner: &mut InnerDev<H, T>
 ) -> DevResult<VsockDriverEvent> {
     let cid = VsockConnId {
         peer_addr: axdriver_vsock::VsockAddr {
