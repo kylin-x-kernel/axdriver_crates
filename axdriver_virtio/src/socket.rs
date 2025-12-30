@@ -1,11 +1,11 @@
 use axdriver_base::{BaseDriverOps, DevResult, DeviceType};
 use axdriver_vsock::{VsockConnId, VsockDriverEvent, VsockDriverOps};
 use virtio_drivers::{
+    Hal,
     device::socket::{
         VirtIOSocket, VsockAddr, VsockConnectionManager as InnerDev, VsockEvent, VsockEventType,
     },
     transport::Transport,
-    Hal,
 };
 
 use crate::as_dev_err;
@@ -73,7 +73,8 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
 
     fn recv(&mut self, cid: VsockConnId, buf: &mut [u8]) -> DevResult<usize> {
         let (peer_addr, src_port) = map_conn_id(cid);
-        let res = self.inner
+        let res = self
+            .inner
             .recv(peer_addr, src_port, buf)
             .map_err(as_dev_err);
         self.inner.update_credit(peer_addr, src_port);
@@ -120,7 +121,7 @@ impl<H: Hal, T: Transport> VsockDriverOps for VirtIoSocketDev<H, T> {
 
 fn convert_vsock_event<H: Hal, T: Transport>(
     event: VsockEvent,
-    inner: &mut InnerDev<H, T>
+    inner: &mut InnerDev<H, T>,
 ) -> DevResult<VsockDriverEvent> {
     let cid = VsockConnId {
         peer_addr: axdriver_vsock::VsockAddr {
