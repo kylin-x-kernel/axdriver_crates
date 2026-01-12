@@ -146,7 +146,7 @@ fn convert_vsock_event<H: Hal, T: Transport>(
         },
         VsockEventType::CreditUpdate => {
             log::info!("axdriver_virtio::Received credit update event, updating credit for {:?}", cid);
-            Ok(VsockDriverEvent::Unknown)
+            Ok(VsockDriverEvent::CreditUpdate(cid))
         },
         
         _ => Ok(VsockDriverEvent::Unknown),
