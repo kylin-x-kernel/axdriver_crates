@@ -139,16 +139,9 @@ fn convert_vsock_event<H: Hal, T: Transport>(
             Ok(VsockDriverEvent::Received(cid, length))
         }
         VsockEventType::Disconnected { reason: _ } => Ok(VsockDriverEvent::Disconnected(cid)),
-        
-        VsockEventType::CreditRequest => {
-            log::info!("axdriver_virtio::Received credit request event, updating credit for {:?}", cid);
-            Ok(VsockDriverEvent::Unknown)
-        },
         VsockEventType::CreditUpdate => {
-            log::info!("axdriver_virtio::Received credit update event, updating credit for {:?}", cid);
             Ok(VsockDriverEvent::CreditUpdate(cid))
         },
-        
         _ => Ok(VsockDriverEvent::Unknown),
     }
 }

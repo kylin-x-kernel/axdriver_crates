@@ -12,5 +12,4 @@ repository.workspace = true
 categories.workspace = true
 
 [dependencies]
-# virtio-drivers = "0.7.4"
-virtio-drivers = { git = "https://github.com/727Hsj/virtio-drivers.git", branch = "forsend" }
+virtio-drivers = "0.7.4"
